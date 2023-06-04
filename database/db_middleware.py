@@ -65,9 +65,10 @@ def get_id_by_name(cls: Type[Base], name: str):
 
 
 def add_user(name: str, address: str, password: str, phone_number: str, is_admin: bool = None,
-             admin_level: int = 1) -> User | None:
+             admin_level: int = 1, tg_id: int = None) -> User | None:
     """Creates a new user in the database
 
+    :param tg_id: telegram id
     :param password: user password
     :param admin_level: admin level
     :param name: username
@@ -79,8 +80,14 @@ def add_user(name: str, address: str, password: str, phone_number: str, is_admin
     with Session(autoflush=True, bind=engine) as session:
         try:
             password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
-            new_user = User(name=name, password=password_hash, address=address, phone_number=phone_number,
-                            is_admin=is_admin)
+            if tg_id:
+                new_user = User(telegram_id=tg_id, name=name, password=password_hash, address=address,
+                                phone_number=phone_number,
+                                is_admin=is_admin)
+            else:
+                new_user = User(name=name, password=password_hash, address=address,
+                                phone_number=phone_number,
+                                is_admin=is_admin)
             session.add(new_user)
             session.commit()
             if is_admin and admin_level is not None:
@@ -222,6 +229,24 @@ def check_user_by_name_and_password(name: str, password: str) -> bool | None:
                 return True
             else:
                 logger.warning(f'User <{name}> <{password}> not found')
+                return
+        except Exception as ex:
+            logger.error(repr(ex))
+
+
+def check_user_by_tg_id(tg_id: int) -> bool | None:
+    """User Telegram id check
+
+    :param tg_id: user Telegram id
+    :return: True if exists and None if not exists
+    """
+    with Session(autoflush=True, bind=engine) as session:
+        try:
+            user = session.query(User).filter_by(telegram_id=tg_id).first()
+            if user:
+                return True
+            else:
+                logger.warning(f'User telegram_id:<{tg_id}> not found')
                 return
         except Exception as ex:
             logger.error(repr(ex))

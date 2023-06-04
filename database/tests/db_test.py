@@ -40,7 +40,8 @@ class DatabaseTestCase(unittest.TestCase):
         self.session.rollback()
 
     def test_add_user(self):
-        user = add_user('TestUser', 'Test Address', 'TestPassword', '123456789')
+        user = add_user(name='TestUser', address='Test Address', password='TestPassword', phone_number='123456789',
+                        tg_id=123456)
         self.session.add(user)
         self.session.commit()
         self.assertIsInstance(user, User)
@@ -49,6 +50,7 @@ class DatabaseTestCase(unittest.TestCase):
         self.assertEqual(user.address, 'Test Address')
         self.assertEqual(user.password, encode_password('TestPassword'))
         self.assertEqual(user.phone_number, '123456789')
+        self.assertEqual(user.telegram_id, 123456)
 
     def test_add_product(self):
         product = add_product('TestProduct', 10.0)
@@ -84,6 +86,12 @@ class DatabaseTestCase(unittest.TestCase):
         self.assertIsInstance(comment, Comment)
         self.assertEqual(comment.comment_text, 'Test Comment')
         self.assertEqual(comment.user.name, 'TestUser')
+
+    def test_check_user_by_tg_id(self):
+        user = add_user(name='TestUser', address='Test Address', password='TestPassword', phone_number='123456789',
+                        tg_id=123456)
+        self.session.add(user)
+        self.assertEqual(user.telegram_id, 123456)
 
 
 if __name__ == '__main__':
