@@ -11,7 +11,7 @@ def setup_logger(log_file: str):
     if not os.path.exists('logs'):
         os.makedirs('logs')
 
-    log_file = os.path.join(os.path.abspath(os.curdir), f'{BASE_DIR}/logs/{log_file}.log')
+    log_file = os.path.join(BASE_DIR, 'logs', f'{log_file}.log')
     file_handler = logging.FileHandler(log_file)
     file_handler.setLevel(logging.INFO)
 

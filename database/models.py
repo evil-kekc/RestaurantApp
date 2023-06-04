@@ -1,3 +1,4 @@
+import logging
 import os
 
 from sqlalchemy import create_engine, Column, Integer, Float, String, ForeignKey, Boolean, DateTime, func, \
@@ -5,15 +6,18 @@ from sqlalchemy import create_engine, Column, Integer, Float, String, ForeignKey
 from sqlalchemy.orm import Session, declarative_base
 from sqlalchemy.orm import relationship
 
-from settings import BASE_DIR
+from settings import setup_logger
 
-if not os.path.exists(f'{BASE_DIR}/db_files'):
-    os.makedirs(f'{BASE_DIR}/db_files')
+BASE_DIR = os.path.abspath(os.path.curdir)
 
-engine_path = fr'{BASE_DIR}/db_files/bot_db.db'
+if not os.path.exists(f'{BASE_DIR}/database/db_files'):
+    os.makedirs(f'{BASE_DIR}/database/db_files')
+
+engine_path = fr'{BASE_DIR}/database/db_files/bot_db.db'
 engine = create_engine(f'sqlite:///{engine_path}')
 
 Base = declarative_base()
+logger = setup_logger('database')
 
 
 class User(Base):
@@ -132,4 +136,6 @@ if __name__ == '__main__':
             session.add_all([admin1, admin2])
             session.commit()
     else:
-        print('Database already exists')
+        logger.info('Database already exists')
+
+Base.metadata.create_all(bind=engine)
