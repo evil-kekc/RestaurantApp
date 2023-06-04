@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 
-from config.bot_config import bot, ADMIN_ID
+from config.bot_config import bot, ADMIN_ID, get_start_kb_authorized, get_start_kb_not_authorized
 from database.db_middleware import add_user, check_user_by_tg_id
 from static_buttons import CANCEL_BUTTON
 
@@ -89,13 +89,7 @@ async def confirm(callback_query: types.CallbackQuery, callback_data: dict, stat
         add_user(name=username, tg_id=callback_query.from_user.id, password=password, address=address,
                  phone_number=phone_number, is_admin=is_admin)
 
-        keyboard = InlineKeyboardMarkup(resize_keyboard=True)
-        keyboard.row(InlineKeyboardButton(
-            'Оформить заказ',
-            callback_data='new_order'))
-        keyboard.row(InlineKeyboardButton(
-            'Посмотреть корзину',
-            callback_data='view_cart'))
+        keyboard = get_start_kb_authorized()
         await bot.send_message(callback_query.from_user.id,
                                'Привет, я бот, который поможет тебе сделать заказ из твоего любимого ресторана',
                                reply_markup=keyboard)
@@ -104,13 +98,7 @@ async def confirm(callback_query: types.CallbackQuery, callback_data: dict, stat
         await state.finish()
     else:
         await callback_query.answer('Регистрация отменена', show_alert=True)
-        keyboard = InlineKeyboardMarkup(resize_keyboard=True)
-        keyboard.row(InlineKeyboardButton(
-            'Регистрация',
-            callback_data='registration'))
-        keyboard.row(InlineKeyboardButton(
-            'У меня уже есть аккаунт',
-            callback_data='authorization'))
+        keyboard = get_start_kb_not_authorized()
         await bot.send_message(callback_query.from_user.id,
                                'Здравствуйте, для использования бота необходимо зарегистрироваться',
                                reply_markup=keyboard)

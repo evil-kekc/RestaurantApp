@@ -250,3 +250,26 @@ def check_user_by_tg_id(tg_id: int) -> bool | None:
                 return
         except Exception as ex:
             logger.error(repr(ex))
+            return
+
+
+def set_tg_id(tg_id: int, username: str) -> Type[User] | None:
+    """Установка Telegram id в поле id пользователя
+
+    :param tg_id: Telegram id
+    :param username: username
+    :return: User object or None if user not found
+    """
+    with Session(autoflush=True, bind=engine) as session:
+        try:
+            user = session.query(User).filter_by(name=username).first()
+            if user:
+                user.telegram_id = tg_id
+                session.commit()
+                return user
+            else:
+                logger.warning(f'User telegram_id:<{tg_id}> not found')
+                return
+        except Exception as ex:
+            logger.error(repr(ex))
+            return

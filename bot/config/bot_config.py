@@ -80,3 +80,33 @@ def check_user_exists():
         return wrapped
 
     return decorator
+
+
+def get_start_kb_not_authorized() -> InlineKeyboardMarkup:
+    """Getting the start keyboard object
+
+    :return: InlineKeyboardMarkup
+    """
+    keyboard = InlineKeyboardMarkup(resize_keyboard=True)
+    keyboard.row(InlineKeyboardButton(
+        'Регистрация',
+        callback_data='registration'))
+    keyboard.row(InlineKeyboardButton(
+        'У меня уже есть аккаунт',
+        callback_data='authorization'))
+    return keyboard
+
+
+def get_start_kb_authorized() -> InlineKeyboardMarkup:
+    """Getting the start keyboard object
+
+    :return: InlineKeyboardMarkup
+    """
+    keyboard = InlineKeyboardMarkup(resize_keyboard=True)
+    keyboard.row(InlineKeyboardButton(
+        'Оформить заказ',
+        callback_data='new_order'))
+    keyboard.row(InlineKeyboardButton(
+        'Посмотреть корзину',
+        callback_data='view_cart'))
+    return keyboard

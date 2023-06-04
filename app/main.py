@@ -8,6 +8,7 @@ from aiogram.utils.exceptions import BadRequest
 from fastapi import FastAPI
 
 from config.bot_config import bot, dp, LOGGER, TOKEN
+from handlers.authorization.authorization import register_handlers_authorization
 from handlers.common import register_handlers_common
 from handlers.registration.registration import register_handlers_registration
 
@@ -45,6 +46,7 @@ async def bot_main():
     logging.info('Starting bot')
     register_handlers_registration(dp)
     register_handlers_common(dp)
+    register_handlers_authorization(dp)
 
     await set_commands(bot)
 

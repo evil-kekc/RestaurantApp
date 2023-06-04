@@ -5,7 +5,7 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
-from database.db_middleware import add_user, add_product, add_rating, add_comment
+from database.db_middleware import add_user, add_product, add_rating, add_comment, set_tg_id
 from database.models import User, Product, Rating, Comment, Base, engine, engine_path
 
 
