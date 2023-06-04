@@ -1,11 +1,10 @@
 import hashlib
 import logging
-import os
 from datetime import datetime
 from typing import Type, Generator, Union
 
 from database.models import Session, Base, User, Product, Order, Comment, Rating, Admin, engine
-from settings import setup_logger, BASE_DIR
+from settings import setup_logger
 
 logger = setup_logger('database')
 
