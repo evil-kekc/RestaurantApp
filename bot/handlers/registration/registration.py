@@ -1,14 +1,14 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
 from aiogram.utils.callback_data import CallbackData
 
 from config.bot_config import bot, ADMIN_ID, get_start_kb_authorized, get_start_kb_not_authorized
 from database.db_middleware import add_user, check_user_by_tg_id
-from static_buttons import CANCEL_BUTTON
+from config.static_buttons import CANCEL_BUTTON
 
-callback_confirm = CallbackData('confirmation_expense', 'answer')
+callback_confirm = CallbackData('confirmation_user', 'answer')
 
 
 class RegistrationStates(StatesGroup):
@@ -46,7 +46,7 @@ async def get_password(message: types.Message, state: FSMContext):
 
 async def get_address(message: types.Message, state: FSMContext):
     await state.update_data(address=message.text)
-    await message.answer('Введите Ваш номер телефона', reply_markup=CANCEL_BUTTON)
+    await message.answer('Введите Ваш номер телефона', reply_markup=ReplyKeyboardRemove())
     await state.set_state(RegistrationStates.get_phone_number.state)
 
 

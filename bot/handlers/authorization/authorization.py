@@ -1,10 +1,11 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
+from aiogram.types import ReplyKeyboardRemove
 
 from config.bot_config import bot, get_start_kb_not_authorized, get_start_kb_authorized
 from database.db_middleware import check_user_by_name_and_password, check_user_by_tg_id, set_tg_id
-from static_buttons import CANCEL_BUTTON
+from config.static_buttons import CANCEL_BUTTON
 
 
 class AuthorizationStates(StatesGroup):
@@ -29,7 +30,7 @@ async def start_authorization(callback_query: types.CallbackQuery, state: FSMCon
 
 async def get_username(message: types.Message, state: FSMContext):
     await state.update_data(username=message.text)
-    await message.answer('Введите пароль', reply_markup=CANCEL_BUTTON)
+    await message.answer('Введите пароль', reply_markup=ReplyKeyboardRemove())
     await state.set_state(AuthorizationStates.get_password.state)
 
 

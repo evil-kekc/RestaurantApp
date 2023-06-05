@@ -1,19 +1,18 @@
-import logging
 import os
 
 from sqlalchemy import create_engine, Column, Integer, Float, String, ForeignKey, Boolean, DateTime, func, \
-    CheckConstraint
-from sqlalchemy.orm import Session, declarative_base
+    CheckConstraint, LargeBinary
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
 from settings import setup_logger
 
-BASE_DIR = os.path.abspath(os.path.curdir)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-if not os.path.exists(f'{BASE_DIR}/database/db_files'):
-    os.makedirs(f'{BASE_DIR}/database/db_files')
+if not os.path.exists(f'{BASE_DIR}/db_files'):
+    os.makedirs(f'{BASE_DIR}/db_files')
 
-engine_path = fr'{BASE_DIR}/database/db_files/bot_db.db'
+engine_path = fr'{BASE_DIR}/db_files/bot_db.db'
 engine = create_engine(f'sqlite:///{engine_path}')
 
 Base = declarative_base()
@@ -41,6 +40,8 @@ class Product(Base):
     name = Column(String)
     price = Column(Float)
     is_available = Column(Boolean)
+    image_data = Column(LargeBinary)
+    orders = relationship('Order', back_populates='products')
 
 
 class Order(Base):
@@ -49,9 +50,10 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     order_time = Column(DateTime(timezone=True))
     is_cancelled = Column(Boolean, default=False)
-    product = Column(Integer, ForeignKey('products.id'))
     quantity = Column(Integer)
     user = relationship('User', back_populates='orders')
+    product = Column(Integer, ForeignKey('products.id'))
+    products = relationship('Product', back_populates='orders')
 
 
 class Comment(Base):
@@ -94,48 +96,5 @@ class BackupHistory(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     backup_time = Column(DateTime(timezone=True), onupdate=func.now())
 
-
-if __name__ == '__main__':
-    if not os.path.exists(f'{BASE_DIR}/db_files/bot_db.db'):
-        Base.metadata.create_all(bind=engine)
-        with Session(autoflush=True, bind=engine) as session:
-            user1 = User(name="John", address="123 Street", phone_number="555-1234", is_admin=False)
-            user2 = User(name="Alice", address="456 Avenue", phone_number="555-5678", is_admin=True)
-
-            session.add_all([user1, user2])
-            session.commit()
-
-            product1 = Product(name="Pizza", price=10.99, is_available=True)
-            product2 = Product(name="Burger", price=5.99, is_available=True)
-            product3 = Product(name="Salad", price=7.99, is_available=False)
-
-            session.add_all([product1, product2, product3])
-            session.commit()
-
-            order1 = Order(user_id=user1.id, product=product1.id, is_cancelled=False)
-            order2 = Order(user_id=user2.id, product=product1.id, is_cancelled=True)
-
-            session.add_all([order1, order2])
-            session.commit()
-
-            comment1 = Comment(user_id=user1.id, product_id=product1.id, comment_text="Great pizza!")
-            comment2 = Comment(user_id=user2.id, product_id=product2.id, comment_text="Delicious burger!")
-
-            session.add_all([comment1, comment2])
-            session.commit()
-
-            rating1 = Rating(user_id=user1.id, product_id=product1.id, rating_value=5)
-            rating2 = Rating(user_id=user2.id, product_id=product2.id, rating_value=4)
-
-            session.add_all([rating1, rating2])
-            session.commit()
-
-            admin1 = Admin(user_id=user1.id, admin_level=1)
-            admin2 = Admin(user_id=user2.id, admin_level=2)
-
-            session.add_all([admin1, admin2])
-            session.commit()
-    else:
-        logger.info('Database already exists')
 
 Base.metadata.create_all(bind=engine)

@@ -7,19 +7,21 @@ from aiogram.types import BotCommand
 from aiogram.utils.exceptions import BadRequest
 from fastapi import FastAPI
 
-from config.bot_config import bot, dp, LOGGER, TOKEN
+from config.bot_config import bot, dp, TOKEN
+from handlers.add_order.add_order import register_handlers_add_order
+from handlers.admin.add_product import register_handlers_add_product
+from handlers.admin.admin import register_handlers_admin
+from handlers.admin.edit_product import register_handlers_edit_product
 from handlers.authorization.authorization import register_handlers_authorization
 from handlers.common import register_handlers_common
+from handlers.get_menu.get_menu import register_handlers_menu
 from handlers.registration.registration import register_handlers_registration
-
-BASE_DIR = os.path.abspath(os.path.curdir)
-
-logging.basicConfig(level=logging.INFO, filename=fr"{str(BASE_DIR)}/{LOGGER}",
-                    format="%(asctime)s | %(levelname)s | %(funcName)s: %(lineno)d | %(message)s",
-                    datefmt="%H:%M:%S")
+from handlers.shopping_cart.get_shopping_cart import register_handlers_cart
+from settings import setup_logger
 
 app = FastAPI()
-# templates = Jinja2Templates(directory=fr"{BASE_DIR}/app/templates")
+
+logger = setup_logger('app')
 
 WEBHOOK_PATH = f"/bot/{TOKEN}"
 WEBHOOK_URL = os.getenv('HOST_URL') + WEBHOOK_PATH
@@ -44,9 +46,15 @@ async def bot_main():
     :return: None
     """
     logging.info('Starting bot')
-    register_handlers_registration(dp)
     register_handlers_common(dp)
+    register_handlers_registration(dp)
     register_handlers_authorization(dp)
+    register_handlers_menu(dp)
+    register_handlers_admin(dp)
+    register_handlers_edit_product(dp)
+    register_handlers_add_product(dp)
+    register_handlers_add_order(dp)
+    register_handlers_cart(dp)
 
     await set_commands(bot)
 
