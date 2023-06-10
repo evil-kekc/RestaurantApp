@@ -1,0 +1,22 @@
+.contact-form .form-group label {
+    font-weight: bold;
+}
+
+.contact-form .form-control {
+    border-radius: 0;
+}
+
+.contact-form .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.contact-form .btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.contact-form .btn-primary:focus,
+.contact-form .btn-primary.focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+}

@@ -8,14 +8,9 @@ from database.db_middleware import get_all_values, get_photo_by_id, change_produ
     get_object_by_id, delete_product_by_id
 from database.models import Product
 
-edit_product = CallbackData('edit_product', 'product_id')
 stop_product = CallbackData('stop_product', 'product_id')
 start_product = CallbackData('start_product', 'product_id')
 delete_product = CallbackData('delete_product', 'product_id')
-
-
-class EditProductStates(StatesGroup):
-    pass
 
 
 @check_user_is_admin()
@@ -27,13 +22,11 @@ async def start_edit(callback_query: types.CallbackQuery, state: FSMContext):
     for product in products:
         if product.is_available:
             buttons = {
-                'Изменить продукт': edit_product.new(product_id=product.id),
                 'Поставить на стоп': stop_product.new(product_id=product.id),
                 'Удалить продукт': delete_product.new(product_id=product.id),
             }
         else:
             buttons = {
-                'Изменить продукт': edit_product.new(product_id=product.id),
                 'Сделать активным': start_product.new(product_id=product.id),
                 'Удалить продукт': delete_product.new(product_id=product.id),
             }
@@ -43,8 +36,8 @@ async def start_edit(callback_query: types.CallbackQuery, state: FSMContext):
         with open(get_photo_by_id(product.id), 'rb') as photo:
             await bot.send_photo(callback_query.from_user.id, photo=photo,
                                  caption=f'Блюдо: {product.name}\n'
-                                         f'Цена: {product.price} руб.\n'
-                                         f'Активен: {product.is_available}', reply_markup=keyboard)
+                                         f'Цена: {product.price} руб.\n',
+                                 reply_markup=keyboard)
 
 
 @check_user_is_admin()
@@ -61,7 +54,6 @@ async def stopping_product(callback_query: types.CallbackQuery, state: FSMContex
     await bot.delete_message(callback_query.from_user.id, message_id)
 
     buttons = {
-        'Изменить продукт': edit_product.new(product_id=product.id),
         'Сделать активным': start_product.new(product_id=product.id),
         'Удалить продукт': delete_product.new(product_id=product.id),
     }
@@ -70,8 +62,8 @@ async def stopping_product(callback_query: types.CallbackQuery, state: FSMContex
     with open(get_photo_by_id(product.id), 'rb') as photo:
         await bot.send_photo(callback_query.from_user.id, photo=photo,
                              caption=f'Блюдо: {product.name}\n'
-                                     f'Цена: {product.price} руб.\n'
-                                     f'Активен: {product.is_available}', reply_markup=keyboard)
+                                     f'Цена: {product.price} руб.\n',
+                             reply_markup=keyboard)
 
 
 @check_user_is_admin()
@@ -88,7 +80,6 @@ async def starting_product(callback_query: types.CallbackQuery, state: FSMContex
     await bot.delete_message(callback_query.from_user.id, message_id)
 
     buttons = {
-        'Изменить продукт': edit_product.new(product_id=product.id),
         'Поставить на стоп': stop_product.new(product_id=product.id),
         'Удалить продукт': delete_product.new(product_id=product.id),
     }
@@ -97,8 +88,8 @@ async def starting_product(callback_query: types.CallbackQuery, state: FSMContex
     with open(get_photo_by_id(product.id), 'rb') as photo:
         await bot.send_photo(callback_query.from_user.id, photo=photo,
                              caption=f'Блюдо: {product.name}\n'
-                                     f'Цена: {product.price} руб.\n'
-                                     f'Активен: {product.is_available}', reply_markup=keyboard)
+                                     f'Цена: {product.price} руб.\n',
+                             reply_markup=keyboard)
 
 
 @check_user_is_admin()

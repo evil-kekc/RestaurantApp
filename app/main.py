@@ -6,6 +6,8 @@ from aiogram import types, Dispatcher
 from aiogram.types import BotCommand
 from aiogram.utils.exceptions import BadRequest
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from starlette.templating import Jinja2Templates
 
 from config.bot_config import bot, dp, TOKEN
 from handlers.add_order.add_order import register_handlers_add_order
@@ -17,9 +19,15 @@ from handlers.common import register_handlers_common
 from handlers.get_menu.get_menu import register_handlers_menu
 from handlers.registration.registration import register_handlers_registration
 from handlers.shopping_cart.get_shopping_cart import register_handlers_cart
+from routes import get_home, contact
 from settings import setup_logger
 
 app = FastAPI()
+app.add_api_route("/", get_home, methods=["GET"])
+app.add_api_route("/contact", contact, methods=["POST"])
+
+templates = Jinja2Templates(directory=fr"app/templates")
+app.mount('/static', StaticFiles(directory='app/static'), name='static')
 
 logger = setup_logger('app')
 

@@ -27,12 +27,14 @@ This project is a task completed as part of a test task.
     * Create a new file named `.env` in the project directory.
 
     * Open the .env file and add the following lines, replacing `<ADMIN_ID>`, `<TOKEN>` and `<HOST_URL>` with your
-      settings
+      settings. To send messages through the form on the site, you need to specify `<ADMIN_EMAIL>` and `<ADMIN_PASSWORD>`.
 
    ```plaintext
    ADMIN_ID=23456789
    TOKEN=123456789:OIXUGJKSGYAAf6SGES
    HOST_URL=https://example.com
+   ADMIN_EMAIL=3371824@gmail.com
+   ADMIN_EMAIL_PASSWORD=password_examle
    ```
 
 2. Run app
