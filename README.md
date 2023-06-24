@@ -1,6 +1,6 @@
-# TestTask
+# RestaurantApp
 
-This project is a task completed as part of a test task.
+This project is a example of restaurant app. The project consists of a Telegram bot and a FastAPI application.
 
 ## Installation
 
